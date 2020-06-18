@@ -3,13 +3,14 @@ ARCH Competition AINNCS 2020 -
 
 ## Benchmarks
 
-Nonlinear TORA with ReLU controller
+- TORA with ReLU controller (benchmark 9)
 
-Nonlinear TORA with heterogeneous controller
+- TORA with heterogeneous and sigmoid controller
 
-Nonlinear Adaptive Cruise Controller (ACC) with ReLU controller
+- Adaptive Cruise Controller (ACC)
 
-VCAS with nonlinear discrete dynamics
+- VCAS
 
-Nonlinear Unicycle with ReLU controller
+- Unicycle (benchmark 10)
 
+- Double Pendulum
