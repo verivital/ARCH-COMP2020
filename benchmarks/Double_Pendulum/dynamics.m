@@ -10,6 +10,8 @@ function [dx] = dynamics(t,x,T)
 
 th1 = x(1);
 th2 = x(2);
+u1 = x(3);
+u2 = x(4);
 T1 = T(1);
 T2 = T(2);
 
