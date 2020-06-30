@@ -6,11 +6,11 @@ controlPeriod = 0.1;
 output_mat = [0 0 0 0 1 0;1 0 0 -1 0 0; 0 1 0 0 -1 0]; % feedback: relative distance, relative velocity and ego-car velocity
 plant = NonLinearODE(6,1,@dynamicsACC, reachStep, controlPeriod, output_mat);
 % noise = Star(-0.0001, 0.0001);
-plant.set_taylorTerms(5);
-plant.set_zonotopeOrder(200);
+% plant.set_taylorTerms(5);
+% plant.set_zonotopeOrder(200);
 % plant.set_polytopeOrder(20);
-error = 0.01;
-plant.options.maxError = [error; error; error; error; error; error];
+% error = 0.1;
+% plant.options.maxError = [error; error; error; error; error; error];
 
 %% Reachability analysis
 tF = 5; % seconds
@@ -45,7 +45,7 @@ for i=1:length(plant.intermediate_reachSet)
     safe_dis = [safe_dis plant.intermediate_reachSet(i).affineMap([0 0 0 0 t_gap 0], D_default)];
 end
 times = reachStep:reachStep:tF;
-save('../../results/ACC_distance','R','rT','outAll','safe_dis','reachStep','error','-v7.3');
+% save('../../results/ACC_distance','R','rT','outAll','safe_dis','reachStep','error','-v7.3');
 f = figure;
 Star.plotRanges_2D(outAll,2,times,'r');
 hold on;

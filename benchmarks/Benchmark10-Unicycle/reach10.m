@@ -2,7 +2,7 @@
 % net = Load_nn('controllerB.onnx');
 net = Load_nn('controllerB_nnv.mat');
 controlPeriod = 0.2;
-reachstep = 0.001;
+reachstep = 0.01;
 plant = NonLinearODE(4,2,@dynamics10, reachstep, controlPeriod, eye(4));
 % noise = Star(-0.0001, 0.0001);
 plant.set_taylorTerms(2);
@@ -37,7 +37,8 @@ input_set = Star(lb,ub);
 reachAll = init_set;
 % Execute reachabilty analysis
 % for i =1:steps
-for i=1:10
+t = tic;
+for i=1:30
     % Compute plant reachable set
     init_set = plant.stepReachStar(init_set, input_set);
     reachAll = [reachAll init_set];
@@ -45,18 +46,15 @@ for i=1:10
     input_set = net.reach(init_set,'approx-star');
     input_set = input_set.affineMap(eye(2),-offsetM);
 end
-
+t = toc(t);
+save('../../results/reach10','-v7.3')
 
 f = figure;
+Star.plotBoxes_2D_noFill(plant.intermediate_reachSet,1,2,'b');
+hold on;
 Star.plotBoxes_2D_noFill(reachAll,1,2,'b');
 grid;
 title('Benchmark 10 reachable sets');
 xlabel('x1');
 ylabel('x2');
-
-f1 = figure;
-Star.plotBoxes_2D_noFill(plant.intermediate_reachSet,1,2,'b');
-grid;
-title('Benchmark 10 reachable sets');
-xlabel('x1');
-ylabel('x2');
+saveas(f,'../../results/reach10_plot.jpg');
