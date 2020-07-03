@@ -13,6 +13,8 @@ ARCH Competition AINNCS 2020 -
 
 - Unicycle (benchmark 10)
 
+- Single Pendulum
+
 - Double Pendulum
 
 - Airplane
