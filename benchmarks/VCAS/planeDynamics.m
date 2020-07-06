@@ -8,9 +8,21 @@ function dx = planeDynamics(t,x,u,T)
 % h0_dot(t+1) = h0_dot + h0_dot_dot*T;
 % tao(t+1) = tao - T;
 % adv(t+1) = adv;
-
-% adv = u(1); New advisory
-% h0_dot_dot = u(2); % Acceleration
+%
+% adv = u(1); New advisory, the output of the neural network controllers
+% h0_dot_dot = u(2); % Acceleration chosen on the basis of the new advisory
+%
+% Originally there are up to 3 possible acceleration values to choose from for each advisory.
+% When proving safety, all possible values should be accounted for.
+%
+% The tools that cannot handle efficiently quantification over all possible
+% acceleration can follow the following two strategies for picking up
+% next acceleration:
+%
+% -- a worst-case scenario selection, where we choose the acceleration 
+%    that will take the ownship closer to or less far apart from the intruder.
+%
+% -- always select the acceleration in the middle.
 
 dx(1,1) = - x(2)*T - 0.5*u(2)*T^2;
 dx(2,1) = u(2)*T;
