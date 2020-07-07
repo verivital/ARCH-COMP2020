@@ -11,7 +11,11 @@ function [dx] = dynamics10(t,x,u,w)
   % disturbance input
   %       w: disturbance with a range (-10^-4,10^4)
   % Initial state range [9.5, 9.55] × [-4.5, -4.45] × [2.1, 2.11] × [1.5, 1.51]
-  
+%
+% The output of the neural network f(x) needs to be normalized 
+% in order to obtain u(1) and u(2).
+% Namely, u(i) = f(x)(i) - 20 
+%
 dx(1,1) = x(4) * cos(x(3));
 dx(2,1) = x(4) * sin(x(3));
 dx(3,1) = u(2);
