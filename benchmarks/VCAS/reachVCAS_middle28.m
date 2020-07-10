@@ -33,23 +33,21 @@ h0.SDES2500 = -g/3;
 h0.SCL2500 = g/3;
 
 
-reachStep = 0.1;
+% reachStep = 0.001;
 controlPeriod = 1;
 out_mat = [1 0 0 0;0 1 0 0;0 0 1 0];
-plant = NonLinearODE(4,2,@planeDynamics, reachStep, controlPeriod, out_mat);
-% noise = Star(-0.0001, 0.0001);
-plant.set_taylorTerms(10);
-plant.set_zonotopeOrder(100);
+% plant = NonLinearODE(4,2,@planeDynamics, reachStep, controlPeriod, out_mat);
+plant = DNonLinearODE(4,2,@planeDynamics, controlPeriod, out_mat);
+% plant.set_taylorTerms(10);
+% plant.set_zonotopeOrder(100);
 % plant.set_polytopeOrder(5);% error = 0.001;
 error = 0.01;
 plant.options.maxError = [error; error; error; error];
 time = 0:controlPeriod:20;
 steps = length(time);
 % Initial set
-lb = [-133; -0.45; 25; 1];
-ub = [-129; -0.43; 25; 1];
-% lb = [-133; -0.45; 10; 1];
-% ub = [-129; -0.43; 10; 1];
+lb = [-133; -28.5; 25; 1];
+ub = [-129; -28.5; 25; 1];
 
 %% Reachability analysis
 init_set = Star(lb,ub);
@@ -61,7 +59,7 @@ minIdx = 1;
 % Store all reachable sets
 reachAll = init_set;
 % Execute reachabilty analysis
-steps = 8;
+steps = 3;
 uNN_all = cell(1,steps);
 yNN_all = cell(1,steps);
 idx_all = cell(1,steps);
@@ -84,9 +82,8 @@ for i =1:steps
     idx_all{i} = minIdx;
     inp_all{i} = input_set;
 end
-disp(' ');
-toc(t);
-save('../../results/reachVCAS','-v7.3')
+timing = toc(t);
+% save('../../results/reachVCAS_middle','timing','reachAll','plant','-v7.3')
 
 %% Visualize results
 times = reachStep:reachStep:steps;
@@ -96,7 +93,7 @@ grid;
 hold on;
 Star.plotBoxes_2D_noFill(reachAll,1,3,'m');
 grid;
-title('VCAS reachable sets')
+title('VCAS reachable sets k=10')
 xlabel('Distance');
 ylabel('Tau');
 % f2 = figure;
@@ -106,7 +103,7 @@ ylabel('Tau');
 % xlabel('Time (s)');
 % ylabel('Distance (ft)');
 % saveas(f2,'../../results/reachVCAS_DvTime.jpg');
-% saveas(f,'../../results/reachVCAS_DvTau.jpg');
+% saveas(f,'../../results/reachVCAS_middle.jpg');
 
 %% Helper Functions
 
@@ -139,28 +136,60 @@ end
 % Set advisory to ownship
 function [idx,y] = advisoryVCAS(r,accs, uNN)
     y = [];
-    idx = randi([1 3],1);
-    idx = 1;
+%     idx = randi([1 3],1);
+    idx = 2;
     [m,M] = uNN.getRanges;
     for l=1:length(r)
         if r(l) == 1
             y = [y Star([1;accs.COC(idx)],[1;accs.COC(idx)])];
         elseif r(l) == 2
-            y = [y Star([2;accs.DNC(idx)],[2;accs.DNC(idx)])];
+            if M(2) < 0 && (M(4) == 2 || m(4) == 2)
+                y = [y Star([2;0],[2;0])];
+            else
+                y = [y Star([2;accs.DNC(idx)],[2;accs.DNC(idx)])];
+            end
         elseif r(l) == 3
-            y = [y Star([3;accs.DND(idx)],[3;accs.DND(idx)])];
+            if m(2) > 0 && (M(4) == 3 || m(4) == 3)
+                y = [y Star([3;0],[3;0])];
+            else
+                y = [y Star([3;accs.DND(idx)],[3;accs.DND(idx)])];
+            end
         elseif r(l) == 4
-            y = [y Star([4;accs.DES1500(idx)],[4;accs.DES1500(idx)])];
+            if M(2) < -25 && (M(4) == 4 || m(4) == 4)
+                y = [y Star([4;0],[4;0])];
+            else
+                y = [y Star([4;accs.DES1500(idx)],[4;accs.DES1500(idx)])];
+            end
         elseif r(l) == 5
-            y = [y Star([5;accs.CL1500(idx)],[5;accs.CL1500(idx)])];
+            if m(2) > 25 && (M(4) == 5 || m(4) == 5)
+                y = [y Star([5;0],[5;0])];
+            else
+                y = [y Star([5;accs.CL1500(idx)],[5;accs.CL1500(idx)])];
+            end
         elseif r(l) == 6
-            y = [y Star([6;accs.SDES1500],[6;accs.SDES1500])];
+            if M(2) < -25&& (M(4) == 6 || m(4) == 6)
+                y = [y Star([6;0],[6;0])];
+            else
+                y = [y Star([6;accs.SDES1500],[6;accs.SDES1500])];
+            end
         elseif r(l) == 7
-            y = [y Star([7;accs.SCL1500],[7;accs.SCL1500])];
+            if m(2) > 25 && (M(4) == 7 || m(4) == 7)
+                y = [y Star([7;0],[7;0])];
+            else
+                y = [y Star([7;accs.SCL1500],[7;accs.SCL1500])];
+            end
         elseif r(l) == 8
-            y = [y Star([8;accs.SDES2500],[8;accs.SDES2500])];
+            if M(2) < -41.66 && (M(4) == 8 || m(4) == 8)
+                y = [y Star([8;0],[8;0])];
+            else
+                y = [y Star([8;accs.SDES2500],[8;accs.SDES2500])];
+            end
         elseif r(l) == 9
-            y = [y Star([9;accs.SCL2500],[9;accs.SCL2500])];
+            if m(2) > 41.66 && (M(4) == 9 || m(4) == 9)
+                y = [y Star([9;0],[9;0])];
+            else
+                y = [y Star([9;accs.SCL2500],[9;accs.SCL2500])];
+            end
         end
     end
 end

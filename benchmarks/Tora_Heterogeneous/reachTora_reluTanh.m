@@ -16,24 +16,12 @@ time = 0:controlPeriod:20;
 steps = length(time);
 % Initial set
 lb = [-0.77; -0.45; 0.51; -0.3];
-ub = [-0.75; -0.43; 0.54; -0.28];
+% ub = [-0.75; -0.43; 0.54; -0.28];
+ub = [-0.76; -0.44; 0.52; -0.29];
 init_set = Box(lb,ub);
 goal = Box([-0.1;-0.9],[0.2;-0.6]);
 offset = 0;
 scale_factor = 11;
-
-
-%% Simulate system
-% nncs = NonlinearNNCS(net,plant);
-% [sT,simTrace, controlTrace, sx0,srfi] = nncs.sample(controlPeriod,50, init_set,[],20);
-% figure;
-% Box.plotBoxes_2D(goal,1,2,'g');
-% grid;
-% hold on;
-% for i=1:length(simTrace)
-%     traj = simTrace{i};
-%     plot(traj(1,:),traj(2,:),'r');
-% end
 
 %% Reachability analysis
 init_set = Star(lb,ub);
@@ -48,23 +36,23 @@ reachAll = init_set;
 t = tic;
 for i = 1:9
     % Compute plant reachable set
-    init_set = plant.stepReachStar(init_set, input_set);
-    reachAll = [reachAll init_set];
+    init_set = plant.stepReachStar(init_set(1), input_set(1));
+    reachAll = [reachAll init_set(1)];
     % Compute controller output set
-    input_set = net.reach(init_set,'approx-star',1);
-    input_set = input_set.affineMap(scale_factor,-offset);
+    input_set = net.reach(init_set(1),'approx-star',1);
+    input_set = input_set(1).affineMap(scale_factor,-offset);
 end
-init_set = plant.stepReachStar(init_set, input_set);
-reachAll = [reachAll init_set];
-disp(' ');
-toc(t);
-save('../../results/reachTora_reluTanh','-v7.3');
+init_set = plant.stepReachStar(init_set(1), input_set(1));
+reachAll = [reachAll init_set(1)];
+timing = toc(t);
+save('../../results/reachTora_reluTanh','timing','reachAll','plant','-v7.3');
 %% Visualize results
 f = figure;
 Star.plotBoxes_2D_noFill(plant.intermediate_reachSet,1,2,'b');
 grid;
 hold on;
 Star.plotBoxes_2D_noFill(reachAll,1,2,'m');
+grid;
 Box.plotBoxes_2D(goal,1,2,'r');
 grid;
 title('Reachable sets for dimensions 1 and 2')
