@@ -10,7 +10,7 @@ function [dx] = dynamics10(t,x,u,w)
   %       u(2): steering angle of front wheel
   % disturbance input
   %       w: disturbance with a range (-10^-4,10^4)
-  % Initial state range [9.5, 9.55] × [-4.5, -4.45] × [2.1, 2.11] × [1.5, 1.51]
+  % Initial state range [9.5, 9.55] Ã— [-4.5, -4.45] Ã— [2.1, 2.11] Ã— [1.5, 1.51]
 %
 % The output of the neural network f(x) needs to be normalized 
 % in order to obtain u(1) and u(2).
