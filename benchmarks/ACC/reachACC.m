@@ -1,16 +1,11 @@
 %% Reachability analysis of TORA (benchmark 9)
 % Load components and set reachability parameters
-net = Load_nn('controller_5_20.onnx');
+% net = Load_nn('controller_5_20.onnx');
+net = Load_nn('controller_5_20_nnv.mat');
 reachStep = 0.01;
 controlPeriod = 0.1;
 output_mat = [0 0 0 0 1 0;1 0 0 -1 0 0; 0 1 0 0 -1 0]; % feedback: relative distance, relative velocity and ego-car velocity
 plant = NonLinearODE(6,1,@dynamicsACC, reachStep, controlPeriod, output_mat);
-% noise = Star(-0.0001, 0.0001);
-% plant.set_taylorTerms(5);
-% plant.set_zonotopeOrder(200);
-% plant.set_polytopeOrder(20);
-% error = 0.1;
-% plant.options.maxError = [error; error; error; error; error; error];
 
 %% Reachability analysis
 tF = 5; % seconds
@@ -53,7 +48,7 @@ Star.plotRanges_2D(safe_dis,1,times,'b');
 title('Relative distance (red) vs. Safe distance (blue)');
 xlabel('Time (s)');
 ylabel('Distance (m)')
-saveas(f,'../../results/ACC_distance_sets.jpg');
+% saveas(f,'../../results/ACC_distance_sets.jpg');
 
 
 

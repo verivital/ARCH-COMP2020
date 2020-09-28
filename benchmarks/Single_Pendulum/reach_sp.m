@@ -4,16 +4,12 @@
 net = Load_nn('controller_single_pendulum.mat');
 
 % Specify the reach step, has to be smaller than the control period
-reachStep = 0.001;
+reachStep = 0.01;
 %% specify the control period as specified by the benchmark description
 controlPeriod = 0.05;
 
 % define the plant as specified by nnv
 plant = NonLinearODE(3,1,@dynamics_sp, reachStep, controlPeriod, eye(3));
-plant.set_zonotopeOrder(100);
-% plant.set_polytopeOrder(20);
-error = 0.01;
-plant.options.maxError = [error; error; error];
 
 %% Reachability analysis
 % Initial set

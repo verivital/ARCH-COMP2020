@@ -13,7 +13,6 @@ plant = NonLinearODE(4,1,@dynamicsTora, reachStep, controlPeriod, eye(4));
 % noise = Star(-0.0001, 0.0001);
 plant.set_taylorTerms(10);
 plant.set_zonotopeOrder(100);
-% plant.set_polytopeOrder(5);% error = 0.001;
 error = 0.01;
 plant.options.maxError = [error; error; error; error];
 time = 0:controlPeriod:20;
@@ -57,7 +56,7 @@ for i =1:10
 end
 disp(' ');
 toc(t);
-save('../../results/reachTora_sigmoid','-v7.3');
+% save('../../results/reachTora_sigmoid','-v7.3');
 goal = Box([-0/1;-0.9],[0.2;-0.6]);
 f = figure;
 Star.plotBoxes_2D_noFill(plant.intermediate_reachSet,1,2,'b');
@@ -68,4 +67,4 @@ grid;
 title('Reachable sets for dimensions 1 and 2')
 xlabel('x1');
 ylabel('x2');
-saveas(f,'../../results/reachTora_sigmoid_plot.jpg');
+% saveas(f,'../../results/reachTora_sigmoid_plot.jpg');

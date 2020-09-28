@@ -1,4 +1,4 @@
-function [dx] = dynamics10(t,x,u,w)
+function [dx] = dynamics10(x,u)
 % Ex_car_model
   %vehicleODE Bicycle model of a vehicle with
   % states
@@ -19,6 +19,7 @@ function [dx] = dynamics10(t,x,u,w)
 dx(1,1) = x(4) * cos(x(3));
 dx(2,1) = x(4) * sin(x(3));
 dx(3,1) = u(2);
-dx(4,1) = u(1) + w;
+dx(4,1) = u(1);
+% dx(4,1) = u(1) + w;
 
 end
